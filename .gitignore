@@ -1,0 +1,11 @@
+# C
+*.o
+*.out
+*.exe
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+env/
