@@ -22,3 +22,14 @@ __pycache__/
 # --- Archivos del sistema ---
 .DS_Store
 Thumbs.db
+# C
+*.o
+*.out
+*.exe
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+env/
