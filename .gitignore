@@ -1,0 +1,24 @@
+# --- Archivos y carpetas de IDEs ---
+.idea/
+*.iml
+.vscode/
+
+# --- Compilación Java ---
+*.class
+out/
+
+# --- Compilación C/C++ ---
+*.o
+*.out
+a.out
+multimat   # binario compilado en tu caso
+
+# --- Archivos Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Archivos del sistema ---
+.DS_Store
+Thumbs.db
