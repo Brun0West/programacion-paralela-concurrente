@@ -2,6 +2,7 @@
 .idea/
 *.iml
 .vscode/
+*.tmp
 
 # --- Compilación Java ---
 *.class
