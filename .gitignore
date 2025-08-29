@@ -13,6 +13,7 @@ out/
 *.out
 a.out
 multimat   # binario compilado en tu caso
+*.exe
 
 # --- Archivos Python ---
 __pycache__/
