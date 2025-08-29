@@ -43,14 +43,13 @@ public class BigNums {
         return sr.ints(n,0,10).mapToObj(i -> random(k)).toList();
     }
     public static void main(String[] args) {
-        int n = 100; // Number of digits
-        int k = 2;
+        int n = Integer.parseInt(args[0]); // Number of digits
+        int k = Integer.parseInt(args[1]);
         BigNums b = new BigNums();
 
         List<BigInteger> listNum = b.listNum(k, n);
 
         listNum.forEach(S -> System.out.println("Numero: " +S + "\n"));
-        // Factorial of a large numbe
         listNum.stream()
                 .map(Number -> CompletableFuture.supplyAsync(() -> factorization(Number)))
                 .map(CompletableFuture -> CompletableFuture.thenApply(N -> N))
