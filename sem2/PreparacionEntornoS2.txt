@@ -1,0 +1,168 @@
+Preparación del Entorno en Ubuntu - Máquina Virtual Virtual Box
+1. Instalar la última versión Virtual Box y Extensión Pack
+2. Instalar Ubuntu 24.04 LTS
+3. Actualizar los repositorios de Ubuntu
+sudo apt-get update
+sudo apt-get upgrade
+4. En ubuntu instalar el programa htop para monitorear el uso del CPU
+sudo snap install htop
+4.Instalar el compilador de C (gcc)
+sudo apt install gcc
+5.Verificar la versión de python instalada
+python --version
+6. Instalar la siguiente librería en Python
+sudo apt install python3-numpy  
+7. Instalar la librería OpenMP para ejecutar programas paralelos en lenguaje C
+sudo apt-get install openmpi-bin libopenmpi-dev
+
+Crear el programa fuente en C
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+int sum; /* los hilos comparten esta variable */
+void *runner(void *param); /* los hilos llaman a esta funcion */
+int main(int argc, char *argv[])
+{
+pthread_t tid; /* el identificador del hilo */
+pthread_attr_t attr; /* conjunto de atributos del hilo */
+/* configura los atributos del hilo por defecto */
+pthread_attr_init(&attr);
+/* crea el hilo */
+pthread_create(&tid, &attr, runner, argv[1]);
+/* esperar que el hilo termine */
+pthread_join(tid,NULL);
+printf("sum = %d",sum);
+}
+/* El hilo inicia su ejecución en esta funcion */
+void *runner(void *param)
+{
+int i, upper = atoi(param);
+sum = 0;
+for (i = 1; i <= upper; i++)
+sum += i;
+pthread_exit(0);
+}
+
+Hacer las pruebas de acuerdo a la ppt
+A continuación ejecutar Fibonacci en forma secuencial
+
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define initrandomico() srand(time(NULL))
+#define randomico(n) rand() % n
+
+#define MAXITER 1000000
+
+int fibonacci(int n) {
+if (n==0)
+return 0;
+else if (n==1)
+return 1;
+else
+return fibonacci(n-1) + fibonacci(n-2);
+}
+int main (int argc, char** argv){
+int i;
+double sum;
+
+sum=0;
+initrandomico();
+for (i=0;i< MAXITER; i++){
+sum+=fibonacci(randomico(20));
+}
+printf("%.2lf\n",sum);
+return 0;
+}
+
+
+Luego ejecutar Fibonacci con Pthreads
+
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+#include <pthread.h>
+
+
+#define initrandomico() srand(time(NULL))
+#define randomico(n) rand() % n
+
+#define MAXITER 1000000
+#define MAXTHREADS 8
+
+double sumparcial[MAXTHREADS];
+
+int fibonacci(int n) {
+if (n==0)
+return 0;
+else if (n==1)
+return 1;
+else
+return fibonacci(n-1) + fibonacci(n-2);
+}
+
+void* myfunction(void *data){
+
+int id = (int) data;
+int iterxthread = MAXITER/MAXTHREADS;
+int i;
+printf("Hilo %d interaciones %d\n",id,iterxthread);
+sumparcial[id]=0;
+for(i=0; i< iterxthread; i++)
+sumparcial[id] += (double)fibonacci(randomico(20));
+return NULL;
+}
+
+int main (int argc, char** argv){
+int i;
+double sum;
+pthread_t threadid[MAXTHREADS];
+
+sum=0;
+initrandomico();
+for (i=0;i< MAXTHREADS; i++)
+pthread_create(&threadid[i],NULL, myfunction, (void*)i);
+for (i=0;i< MAXTHREADS; i++){
+pthread_join(threadid[i],NULL);
+sum+=sumparcial[i];
+}
+printf("%.2lf\n",sum);
+return 0;
+}
+
+Ahora se toca OPenMP, y se implementa Fibonacci con OpenMP
+
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define initrandomico() srand(time(NULL))
+#define randomico(n) rand() % n
+
+#define MAXITER 1000000
+
+int fibonacci(int n) {
+if (n==0)
+return 0;
+else if (n==1)
+return 1;
+else
+return fibonacci(n-1) + fibonacci(n-2);
+}
+int main (int argc, char** argv){
+int i;
+double sum;
+
+sum=0;
+initrandomico();
+#pragma omp parallel for private(i) reduction(+:sum)
+for (i=0;i< MAXITER; i++){
+sum+=fibonacci(randomico(20));
+}
+printf("%.2lf\n",sum);
+return 0;
+}
